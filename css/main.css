@@ -4,9 +4,29 @@
    Author's custom styles
    ========================================================================== */
 
+body {
+	padding-top: 70px;
+	background-color: #eee;
+}
 
+.img-responsive {
+	width: 100%;
+	-ms-interpolation-mode: bicubic;
+}
 
+video {
+  width: 100%    !important;
+  height: auto   !important;
+}
 
+.panel-footer, .panel-default > .panel-heading {
+	background: white;
+}
+
+a.link:hover,
+a.link:focus {
+	text-decoration: none !Important;	
+}
 
 
 
