@@ -13,6 +13,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
+<meta property="og:title" content="RedditReadR" />
+<meta property="og:site_name" content="RedditReadR" />
+<meta property="og:description " content="Read Reddit like it was Instagram" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://lennynilsson.github.io/ReReR/" />
+<meta property="og:image" content="http://lennynilsson.github.io/ReReR/reddit.png" />
+
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="css/main.css">
@@ -21,7 +28,7 @@
 <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"
 	type="text/javascript"></script>
 </head>
-<body>
+<body class="sfw">
 	<!--[if lt IE 7]>
    	<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 	<![endif]-->
@@ -45,18 +52,14 @@
 				 	<div class="form-group">
 				    	<input type="text" class="form-control" placeholder="SubReddit" id="subreddit">
 				  	</div>
+					<button id="nsfw_toggle" type="button" class="btn btn-default" data-toggle="button">NSFW</button>
 				</form>
-				
 				<ul class="nav navbar-nav navbar-right">
-					<li class="active"><a href="#" title="Hot"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span><span class="hidden-md hidden-sm"> Hot</span></a></li>
-					<li><a href="#" title="New"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span><span class="hidden-md hidden-sm"> New</span></a></li>
-					<li><a href="#" title="Raising"><span class="oi oi-arrow-thick-top" aria-hidden="true"></span><span class="hidden-md hidden-sm"> Raising</span></a></li>
-					<li><a href="#" title="Controversial"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span class="hidden-md hidden-sm"> Controversial</span></a></li>
-					<li><a href="#" title="Top"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span class="hidden-md hidden-sm"> Top</span></a></li>
-					<li><a href="#" title="Random"><span class="glyphicon glyphicon-gift" aria-hidden="true"></span><span class="hidden-md hidden-sm"> Random</span></a></li>
-					<li><a href="#" title="Glided"><span class="glyphicon glyphicon-send" aria-hidden="true"></span><span class="hidden-md hidden-sm"> Glided</span></a></li>
-					<li><a href="#" title="Wiki"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><span class="hidden-md hidden-sm"> Wiki</span></a></li>
-					<li><a href="#" title="Promoted"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span><span class="hidden-md hidden-sm"> Promoted</span></a></li>
+					<li class="active"><a id="_hot" title="Hot"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span><span class="hidden-sm"> Hot</span></a></li>
+					<li><a data-name="new" title="New"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span><span class="hidden-sm"> New</span></a></li>
+					<li><a data-name="raising" title="Raising"><span class="oi oi-arrow-thick-top" aria-hidden="true"></span><span class="hidden-sm"> Raising</span></a></li>
+					<li><a data-name="controversial" title="Controversial"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span class="hidden-sm"> Controversial</span></a></li>
+					<li><a data-name="top" title="Top"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><span class="hidden-sm"> Top</span></a></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -73,16 +76,19 @@
 
 	
 		<div id="content">
-			<div class="gutter-sizer"></div>
-			<div class="grid-sizer"></div>		
 		</div>
 		
-		<button id="load_more" class="btn btn-default">Load more</button>
+		<div class="clearfix"></div>
 		
+		<div class="col-xs-12">
+			<button id="load_more" class="btn btn-primary btn-lg btn-block">Load more</button>
+		</div>
+		
+		<hr>
 
-		<footer>
+		<footer class="col-xs-12">
 			<hr>
-			<p>by Lenny Nilsson 2014</p>
+			<p class="text-center">by Lenny Nilsson 2014</p>
 		</footer>
 	</div>
 	<!-- /container -->
@@ -90,47 +96,71 @@
 	<script src="js/vendor/bootstrap.min.js" type="text/javascript"></script>
 	<script src="js/vendor/Snoocore-standalone.js" type="text/javascript"></script>
 	<script src="js/vendor/handlebars-v2.0.0.js" type="text/javascript"></script>
-	<script src="js/vendor/masonry.pkgd.min.js" type="text/javascript"></script>
+	<!-- <script src="js/vendor/masonry.pkgd.min.js" type="text/javascript"></script> -->
 	<script src="js/vendor/imagesloaded.pkgd.min.js" type="text/javascript"></script>
 	<script src="js/vendor/typeahead.bundle.min.js" type="text/javascript"></script>
 	<script src="js/main.js" type="text/javascript"></script>
 
 	<script id="entry-template" type="text/x-handlebars-template">
-	<div class="item">
+	<div class="col-sm-6 col-md-4 col-lg-3 item">
 		<div class="list-group">
 
-				{{#if content_video}}
-				<iframe class="list-group-item full{{#if nsfw}} nsfw{{/if}}" width="1280" height="720" src="{{content_video}}" frameborder="0" allowfullscreen></iframe>
-				{{/if}}
-				{{#if content_image}}
-				<a class="list-group-item full" href="{{source_url}}" target="_blank">
-					<img class="img-responsive{{#if nsfw}} nsfw{{/if}}" src="{{content_image}}" alt="{{title}}">
-				</a>
-				{{/if}}
-				{{#if content_text}}
-				<a class="list-group-item" href="{{source_url}}" target="_blank">
-					<p class="{{#if nsfw}}nsfw{{/if}}">{{content_text}}</p>
-				</a>
-				{{/if}}
-				{{#if has_raw}}
-				<div class="list-group-item{{#if nsfw}} nsfw{{/if}}">
-					{{{content_raw}}}
-				</div>
-				{{/if}}
-			<div class="list-group-item">
-				<p>{{title}}</p>
+			{{#if content_video}}
+			<div class="list-group-item embed-responsive embed-responsive-4by3{{#if nsfw}} nsfw{{/if}}">
+				<iframe class="embed-responsive-item" src="{{content_video}}" frameborder="0" scrolling="no" wmode="Opaque" allowfullscreen></iframe>
+			</div>		
+			{{/if}}
+			{{#if content_embed}}
+			<div class="list-group-item embed-responsive embed-responsive-4by3{{#if nsfw}} nsfw{{/if}}">
+				<iframe class="embed-responsive-item" src="{{content_embed}}" frameborder="0" scrolling="no" allowfullscreen></iframe>
+			</div>		
+			{{/if}}
+			{{#if content_image}}
+			<a class="list-group-item full{{#if nsfw}} nsfw{{/if}}" href="{{source_url}}" target="_blank">
+				<img class="img-responsive" src="{{content_image}}" alt="{{title}}">
+			</a>
+			{{/if}}
+			{{#if content_text}}
+			<a class="list-group-item{{#if nsfw}} nsfw{{/if}}" href="{{source_url}}" target="_blank">
+				<p>{{content_text}}</p>
+			</a>
+			{{/if}}
+			{{#if has_raw}}
+			<div class="list-group-item{{#if nsfw}} nsfw{{/if}}">
+				{{{content_raw}}}
 			</div>
+			{{/if}}
 			<div class="list-group-item active"> 
 				<p> 
 					<a class="link" href="{{subreddit_url}}" target="_blank"><span class="label label-white"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span> {{rating}}</span></a>
 					<a class="link" href="{{comments_url}}" target="_blank"><span class="label label-white"><span class="glyphicon glyphicon glyphicon-comment" aria-hidden="true"></span> {{num_comments}}</span></a>  
 					<a class="link" href="{{author_url}}" target="_blank"><span class="label label-white"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{author}}</span></a>
-					<a class="link" href="{{subreddit}}"><span class="label label-white"><span class="glyphicon glyphicon-tag" aria-hidden="true"></span> {{subreddit}}</span></a>
+					<a class="link" href="#{{subreddit}}"><span class="label label-white"><span class="glyphicon glyphicon-tag" aria-hidden="true"></span> {{subreddit}}</span></a>
 					<a class="link" href="{{source_url}}" target="_blank"><span class="label label-white"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> {{source}}</span></a>
 				</p>
 			</div>
 		</div>
 	</div>
 	</script>
+
+	<!-- Modal -->
+	<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title" id="myModalLabel">Confirm that you ar over 18 years old?</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<p>Press yes to confirm that you are over 18 years old.</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Yes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
 </body>
 </html>

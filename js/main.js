@@ -9,6 +9,27 @@ window.getForm = function(form) {
     return formObj;
 }
 
+window.compare = function(s1, s2) {
+	return s1.indexOf(s2) == 0;
+}
+
+window.getLastPart = function(string, sep) {
+	if (sep == void 0) {
+		sep = '/';
+	}
+	var parts = string.split(sep);
+	return parts[parts.length - 1].split('#')[0];
+}
+
+window.setPath = function() {
+	var hash = '#' + ((0 < window.subreddit.length) ? '/r/' + window.subreddit : '') + '/' + window.sorting;
+	if(history.pushState) {
+	    history.pushState(null, null, hash);
+	} else {
+	    location.hash = hash;
+	}
+}
+
 window.parse = function(slice) {
     var html = '';
     for (var s in slice) {
@@ -17,23 +38,52 @@ window.parse = function(slice) {
     	var content_video = false;
     	var content_text = false;
     	var content_raw = false;
-    	console.log(data);
-    	if (data.media && data.media.oembed) {
-    		content_raw = data.media.oembed.content
-    	} else if (data.is_self) {
-    		content_raw = data.selftext_html;
-    	} else {
-        	switch (data.domain) {
-		    	case '31.media.tumblr.com':
-		    	case 'i.imgur.com':
-		    		content_image = 'http://i.'+data.url.substring(7)+'.jpg';
-		    		break;
-		    	case 'i.imgur.com':
-		    		content_image = data.url;
-		    		break;
-		    	default:
-		    		content_image = data.thumbnail;
-        	}    		
+    	var content_embed = false;
+		if (data.title && 0 < data.title.trim().length) {
+    		content_text = data.title;
+		}
+    	if (compare(data.url, 'http://m.imgur.com/a/')
+			|| compare(data.url, 'http://imgur.com/a/')) {
+    		var id = getLastPart(data.url);
+    		content_embed = 'http://imgur.com/a/'+id+'/embed';
+    	} else if (compare(data.url, 'http://www.gfycat.com/')) {
+    		var id = getLastPart(data.url);
+    		//zippy, fat, giant
+    		content_image = 'http://zippy.gfycat.com/' + id + '.gif';
+    		//content_embed = 'http://gfycat.com/ifr/' + id;
+    	} else if (compare(data.source_url, 'http://www.gfycat.com/')) {
+    		var id = getLastPart(data.source_url);
+    		//zippy, fat, giant
+    		content_image = 'http://zippy.gfycat.com/' + id + '.gif';
+    		//content_embed = 'http://gfycat.com/ifr/' + id;
+    	} else if (compare(data.url, 'http://i.imgur.com/')
+    			|| compare(data.url, 'http://31.media.tumblr.com/')){
+    		var id = getLastPart(data.url);
+    		content_image = 'http://i.imgur.com/'+id+'.jpg';
+    	} else if (compare(data.url, 'http://www.ted.com/talks/')) {
+    		var id = getLastPart(data.url);
+    		content_video = 'https://embed-ssl.ted.com/talks/' + id + '.html';
+    	} else if (compare(data.url, 'http://youtu.be/')) {
+    		var id = getLastPart(data.url);
+    		content_video = 'http://www.youtube.com/embed/' + id;
+    	} else if (compare(data.url, 'https://www.youtube.com/watch')
+    			|| compare(data.url, 'http://www.youtube.com/watch')) {
+    		var id = getLastPart(data.url, 'v=');
+    		content_video = 'http://www.youtube.com/embed/' + id;
+    	} else if (compare(data.url, 'http://imgur.com/')) {
+    		var id = getLastPart(data.url);
+    		content_image = 'http://i.imgur.com/' + id + '.jpg';
+    	} else if (data.is_self && data.selftext != null && 0 < data.selftext.trim().length) {
+        	content_raw = '<p>' + data.selftext.replace(/[\n]/gm, '<br>') + '</p>';
+    	} else if (data.media 
+    			&& data.media.oembed 
+    			&& data.media.oembed.content) {
+    		content_raw = content;
+    	} else if (data.thumbnail && 0 < data.thumbnail.length && data.thumbnail != 'default') {
+    		content_image = data.thumbnail;		
+    	} else if (content_text == false) {
+    		console.log(data);
+    		content_text = data.url;
     	}
     	html += window.templates.entry({
     		title: data.title,
@@ -43,6 +93,26 @@ window.parse = function(slice) {
     		content_text: content_text,
     		content_image: content_image,
     		content_raw: content_raw,
+    		content_embed: content_embed,
+    		nsfw: data.over_18,
+    		has_raw: content_raw != false,
+    		rating: data.score,
+    		num_comments: data.num_comments,
+    		comments_url: 'http://reddit.com' + data.permalink,
+    		author: data.author,
+    		author_url: 'http://www.reddit.com/user/' + data.author,
+    		subreddit: '/r/' + data.subreddit,
+    		subreddit_url: 'http://reddit.com/r/' + data.subreddit
+    	});
+    	console.log({
+    		title: data.title,
+    		source: data.domain,
+    		source_url: data.url,
+    		content_video: content_video,
+    		content_text: content_text,
+    		content_image: content_image,
+    		content_raw: content_raw,
+    		content_embed: content_embed,
     		nsfw: data.over_18,
     		has_raw: content_raw != false,
     		rating: data.score,
@@ -74,9 +144,6 @@ window.load_more = function() {
 	    var $html = $(window.parse(slice.children));
 	    var $container = $('#content');
 	    $container.append($html);
-	    imagesLoaded($container[0], function() {
-	    	$container.masonry();
-    	});
 	    window.promise = slice.next();
 	    return window.promise;
 	});
@@ -87,8 +154,9 @@ window.changeTypeahead = function($e, datum) {
 	window.location.hash = datum.url;
 	$('#content').find('.item').remove();
 	console.log(datum.url.split('/')[1]);
+	window.subreddit = datum.url.slice(3, datum.url.length-1);
 	window.promise = window.reddit('/r/$subreddit/hot').listing({ 
-		$subreddit: datum.url.slice(3, datum.url.length-1), 
+		$subreddit: subreddit, 
 		limit: 50 
 	});
 	window.load_more();
@@ -142,20 +210,50 @@ $(function() {
 	};
 	
 	var $container = $('#content');
-
-	window.masonry = new Masonry($container[0], {
-		isInitLayout: false,
-		gutter: '.gutter-sizer',
-		columnWidth: '.grid-sizer',
-		itemSelector: '.item'
-	});
 	
-	// Load posts
+	window.sorting = 'hot';
+	window.subreddit = '';
 	window.promise = window.reddit('/hot').listing({ limit: 50 });
+	window.setPath();
 	window.load_more();
 	
 	$('#load_more').on('click', function(e) {
 		window.load_more();
+	});
+	
+	$('#nsfw_toggle').on('click', function () {
+		$('body').toggleClass('sfw');
+	});
+	
+	$('.navbar a').on('click', function(e) {
+		console.log(e);
+		var $target = $(e.currentTarget);
+		var sorting = $target.data('name');
+		//console.log(e, $target, sorting);
+		if (sorting == '') {
+			window.promise = window.reddit('/hot').listing({ limit: 50 });
+			sorting = 'hot';
+		} else {
+			$('.navbar .nav li').removeClass('active');
+			$target.parent().addClass('active');
+		}
+		window.sorting = sorting;
+		if (window.subreddit == '') {
+			console.log('/' + window.sorting);
+			window.promise = window.reddit('/'+window.sorting).listing({ 
+				limit: 50 
+			});
+		} else {
+			window.promise = window.reddit('/r/$subreddit/' + window.sorting).listing({ 
+				$subreddit: window.subreddit, 
+				limit: 50 
+			});	
+		}
+		window.setPath();
+		$('#content .item').remove(); // Remove old posts
+		window.load_more();
+		e.preventDefault();
+		return false;
 	});
 	
 	// Typeahead
