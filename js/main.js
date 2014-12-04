@@ -30,6 +30,10 @@ window.setPath = function() {
 	}
 }
 
+window.endsWith = function(str, end) {
+	return str.substring( str.length - end.length, str.length ) === end;
+}
+
 window.parse = function(slice) {
     var html = '';
     for (var s in slice) {
@@ -51,15 +55,22 @@ window.parse = function(slice) {
     		//zippy, fat, giant
     		content_image = 'http://zippy.gfycat.com/' + id + '.gif';
     		//content_embed = 'http://gfycat.com/ifr/' + id;
-    	} else if (compare(data.source_url, 'http://www.gfycat.com/')) {
+    	} else if (data.source_url && compare(data.source_url, 'http://www.gfycat.com/')) {
     		var id = getLastPart(data.source_url);
     		//zippy, fat, giant
     		content_image = 'http://zippy.gfycat.com/' + id + '.gif';
     		//content_embed = 'http://gfycat.com/ifr/' + id;
-    	} else if (compare(data.url, 'http://i.imgur.com/')
+    	} else if (compare(data.url, 'http://imgur.com/')
+    			|| compare(data.url, 'http://i.imgur.com/')
     			|| compare(data.url, 'http://31.media.tumblr.com/')){
     		var id = getLastPart(data.url);
-    		content_image = 'http://i.imgur.com/'+id+'.jpg';
+    		if (endsWith(id, '.gif')) {
+    			content_image = 'http://i.imgur.com/' + id;
+    		} else if (endsWith(id, '.gifv')) {
+    			content_image = 'http://i.imgur.com/' + id.slice(0, -1);
+    		} else {
+        		content_image = 'http://i.imgur.com/' + id + '.jpg';
+    		}
     	} else if (compare(data.url, 'http://www.ted.com/talks/')) {
     		var id = getLastPart(data.url);
     		content_video = 'https://embed-ssl.ted.com/talks/' + id + '.html';
@@ -70,16 +81,15 @@ window.parse = function(slice) {
     			|| compare(data.url, 'http://www.youtube.com/watch')) {
     		var id = getLastPart(data.url, 'v=');
     		content_video = 'http://www.youtube.com/embed/' + id;
-    	} else if (compare(data.url, 'http://imgur.com/')) {
-    		var id = getLastPart(data.url);
-    		content_image = 'http://i.imgur.com/' + id + '.jpg';
     	} else if (data.is_self && data.selftext != null && 0 < data.selftext.trim().length) {
         	content_raw = '<p>' + data.selftext.replace(/[\n]/gm, '<br>') + '</p>';
     	} else if (data.media 
     			&& data.media.oembed 
     			&& data.media.oembed.content) {
     		content_raw = content;
-    	} else if (data.thumbnail && 0 < data.thumbnail.length && data.thumbnail != 'default') {
+    	} else if (data.thumbnail && 0 < data.thumbnail.length 
+    			&& data.thumbnail != 'default' 
+    			&& data.thumbnail != 'self') {
     		content_image = data.thumbnail;		
     	} else if (content_text == false) {
     		console.log(data);
@@ -104,7 +114,7 @@ window.parse = function(slice) {
     		subreddit: '/r/' + data.subreddit,
     		subreddit_url: 'http://reddit.com/r/' + data.subreddit
     	});
-    	console.log({
+    	console.log(data, {
     		title: data.title,
     		source: data.domain,
     		source_url: data.url,

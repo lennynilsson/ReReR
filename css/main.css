@@ -28,7 +28,17 @@ video {
 }
 
 .sfw .nsfw {
+	background: #fcc;
+}
 
+.sfw a.nsfw:focus:before,
+.sfw a.nsfw:hover:before {
+	font-weight: bolder;
+	font-size: 3em;
+	content: "NSFW";
+	position: absolute;
+	top: 0.5em;
+	left: 0.5em;
 }
 
 iframe {
@@ -36,16 +46,17 @@ iframe {
 	-webkit-transform: scale(1);
 }
 
-.label-white {
-	color: black;
-	background-color: white;
-	text-shadow: 0 -1px 0 #eee;
+.white {
+	color: white;
 }
 
-.label-white:hover, .label-white:focus {
-	color: black;
-	background-color: #eee;
-	text-shadow: 0 -1px 0 #eee;
+.no-break {
+	white-space: nowrap;
+	word-break: keep-all;
+}
+
+.white:hover, .white:focus {
+	color: #eee;
 }
 
 .item {
