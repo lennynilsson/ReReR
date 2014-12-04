@@ -111,26 +111,8 @@ window.parse = function(slice) {
     		comments_url: 'http://reddit.com' + data.permalink,
     		author: data.author,
     		author_url: 'http://www.reddit.com/user/' + data.author,
-    		subreddit: '/r/' + data.subreddit,
-    		subreddit_url: 'http://reddit.com/r/' + data.subreddit
-    	});
-    	console.log(data, {
-    		title: data.title,
-    		source: data.domain,
-    		source_url: data.url,
-    		content_video: content_video,
-    		content_text: content_text,
-    		content_image: content_image,
-    		content_raw: content_raw,
-    		content_embed: content_embed,
-    		nsfw: data.over_18,
-    		has_raw: content_raw != false,
-    		rating: data.score,
-    		num_comments: data.num_comments,
-    		comments_url: 'http://reddit.com' + data.permalink,
-    		author: data.author,
-    		author_url: 'http://www.reddit.com/user/' + data.author,
-    		subreddit: '/r/' + data.subreddit,
+    		subreddit: data.subreddit,
+    		subreddit_path: '/r/' + data.subreddit,
     		subreddit_url: 'http://reddit.com/r/' + data.subreddit
     	});
     }
@@ -148,11 +130,20 @@ window.reddit = new Snoocore({
 
 window.load_more = function() {
 	var button = $('#load_more');
-	button.button('Loading...');
+	button.button('loading');
 	window.promise.then(function(slice) {
 	    button.button('reset');
 	    var $html = $(window.parse(slice.children));
 	    var $container = $('#content');
+		$html.find('*[data-subreddit]').on('click', function (e) {
+			var $target = $(e.currentTarget);
+			var subreddit = $target.data('subreddit');
+			$('#subreddit').val(subreddit);
+			window.subreddit = subreddit;
+			window.setPath();
+			$('#content .item').remove(); // Remove old posts
+			window.load_more();
+		});
 	    $container.append($html);
 	    window.promise = slice.next();
 	    return window.promise;
@@ -223,7 +214,31 @@ $(function() {
 	
 	window.sorting = 'hot';
 	window.subreddit = '';
-	window.promise = window.reddit('/hot').listing({ limit: 50 });
+	
+	if(window.location.hash) {
+		var parts = window.location.hash.split('/');
+		if (3 <= parts.length) {
+			window.subreddit = parts[2];
+			$('#subreddit').val(window.subreddit);
+		} 
+		if (4 == parts.length) {
+			window.sorting = parts[3];
+			$('.navbar .nav li').removeClass('active');
+			$('.nav a[data-name="'+window.sorting+'"]').parent().addClass('active');
+		}
+	}
+
+	if (window.subreddit == '') {
+		window.promise = window.reddit('/'+window.sorting).listing({ 
+			limit: 50 
+		});
+	} else {
+		window.promise = window.reddit('/r/$subreddit/' + window.sorting).listing({ 
+			$subreddit: window.subreddit, 
+			limit: 50 
+		});	
+	}
+	
 	window.setPath();
 	window.load_more();
 	
@@ -231,7 +246,7 @@ $(function() {
 		window.load_more();
 	});
 	
-	$('#nsfw_toggle').on('click', function () {
+	$('#nsfw_toggle').on('click', function (e) {
 		$('body').toggleClass('sfw');
 	});
 	
@@ -249,7 +264,6 @@ $(function() {
 		}
 		window.sorting = sorting;
 		if (window.subreddit == '') {
-			console.log('/' + window.sorting);
 			window.promise = window.reddit('/'+window.sorting).listing({ 
 				limit: 50 
 			});
