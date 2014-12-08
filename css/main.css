@@ -59,8 +59,15 @@ iframe {
 	color: #eee;
 }
 
+#content {
+	text-align: center;
+}
+
 .item {
 	word-wrap: break-word;
+	max-width: 100%;
+	width: 500px;
+	display: inline-block;
 }
 
 .embed-responsive {

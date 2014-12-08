@@ -15,7 +15,7 @@
 
 <meta property="og:title" content="RedditReadR" />
 <meta property="og:site_name" content="RedditReadR" />
-<meta property="og:description " content="Read Reddit like it was Instagram" />
+<meta property="og:description " content="Read Reddit like it was Pinterest" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="http://lennynilsson.github.io/ReReR/" />
 <meta property="og:image" content="http://lennynilsson.github.io/ReReR/reddit.png" />
@@ -39,11 +39,12 @@
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed"
 					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
+					<span class="sr-only">Toggle navigation</span> 
+					<span class="icon-bar"></span> 
+					<span class="icon-bar"></span> 
+					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#"><span class="text-primary">R</span>eddit<span class="text-primary">R</span>ead<span class="text-primary">R</span></a>
+				<a class="navbar-brand" href="#">RedditReadR</a>
 			</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
@@ -52,7 +53,7 @@
 				 	<div class="form-group">
 				    	<input type="text" class="form-control" placeholder="SubReddit" id="subreddit">
 				  	</div>
-					<button id="nsfw_toggle" type="button" class="btn btn-default" data-toggle="button">NSFW</button>
+					<button id="nsfw_toggle" type="button" class="btn btn-danger" data-toggle="button">NSFW</button>
 				</form>
 				<ul class="nav navbar-nav navbar-right">
 					<li class="active"><a id="_hot" title="Hot"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span><span class="hidden-sm"> Hot</span></a></li>
@@ -68,20 +69,26 @@
 	</nav>
 	<div class="container-fluid">
 		
-		<div class="alert alert-warning alert-dismissible" role="alert">
-		  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		  <strong><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Disclaimer!</strong> I assume no responsibility or liability for any loss or damage suffered by any person as a result of the use or misuse of any of the information or content on this website.
+
+		<div class="col-xs-12">
+			<div class="alert alert-warning alert-dismissible" role="alert">
+			  <button type="button" class="close" data-dismiss="alert">
+			  	<span aria-hidden="true">&times;</span>
+			  	<span class="sr-only">Close</span></button>
+			  <strong><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Disclaimer!</strong> I assume no responsibility or liability for any loss or damage suffered by any person as a result of the use or misuse of any of the information or content on this website.
+			</div>
 		</div>
-		
 
 	
-		<div id="content">
+		<div id="content" class="col-xs-12">
 		</div>
+
+		<div id="col-width" class="col-sm-6 col-md-4 col-lg-3"></div>
 		
 		<div class="clearfix"></div>
 		
 		<div class="col-xs-12">
-			<button id="load_more" class="btn btn-primary btn-lg btn-block">Load more</button>
+			<button id="load_more" class="btn btn-success btn-lg btn-block">Load more</button>
 		</div>
 		
 		<hr>
@@ -96,13 +103,13 @@
 	<script src="js/vendor/bootstrap.min.js" type="text/javascript"></script>
 	<script src="js/vendor/Snoocore-standalone.js" type="text/javascript"></script>
 	<script src="js/vendor/handlebars-v2.0.0.js" type="text/javascript"></script>
-	<!-- <script src="js/vendor/masonry.pkgd.min.js" type="text/javascript"></script> -->
+	<script src="js/vendor/masonry.pkgd.min.js" type="text/javascript"></script>
 	<script src="js/vendor/imagesloaded.pkgd.min.js" type="text/javascript"></script>
 	<script src="js/vendor/typeahead.bundle.min.js" type="text/javascript"></script>
 	<script src="js/main.js" type="text/javascript"></script>
 
 	<script id="entry-template" type="text/x-handlebars-template">
-	<div class="col-sm-6 col-md-4 col-lg-3 item">
+	<div class="item">
 		<div class="list-group">
 
 			{{#if content_video}}
@@ -143,6 +150,8 @@
 					<a class="link no-break" href="{{source_url}}" target="_blank"><span class="white"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> {{source}}</span></a>
 					&nbsp;
 					<a class="link no-break" href="#{{subreddit_path}}" data-subreddit="{{subreddit}}"><span class="white"><span class="glyphicon glyphicon-record" aria-hidden="true"></span> #{{subreddit_path}}</span></a>
+					&nbsp;
+					<a class="link no-break" href="#" data-fullscreen><span class="white"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Fullscreen</span></a>
 				</small>
 			</div>
 		</div>
@@ -150,20 +159,32 @@
 	</script>
 	
 	<!-- Modal -->
-	<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="confirm_modal_title" aria-hidden="true">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-	        <h4 class="modal-title" id="myModalLabel">Confirm that you ar over 18 years old?</h4>
+	        <h4 class="modal-title" id="confirm_modal_title">Confirm that you ar over 18 years old?</h4>
 	      </div>
 	      <div class="modal-body">
 	      	<p>Press yes to confirm that you are over 18 years old.</p>
 	      </div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Yes</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal" id="ans_no">No</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal" id="ans_yes">Yes</button>
 	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<div class="modal fade" id="lightbox_modal" tabindex="-1" role="dialog" aria-labelledby="lightbox_modal_title" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title" id="lightbox_modal_title"></h4>
+	      </div>
+	      <div class="modal-body" id="lightbox_modal_title"></div>
 	    </div>
 	  </div>
 	</div>

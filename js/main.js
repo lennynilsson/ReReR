@@ -145,6 +145,9 @@ window.load_more = function() {
 			window.load_more();
 		});
 	    $container.append($html);
+	    imagesLoaded($container[0], function() {
+	    	$container.masonry();
+    	});
 	    window.promise = slice.next();
 	    return window.promise;
 	});
@@ -211,6 +214,16 @@ $(function() {
 	};
 	
 	var $container = $('#content');
+
+	window.masonry = new Masonry($container[0], {
+		isInitLayout: false,
+		isResizeBound: true,
+		transitionDuration: 0,
+		isFitWidth: true,
+		gutter: 25,
+		columnWidth: 500,
+		itemSelector: '.item'
+	});
 	
 	window.sorting = 'hot';
 	window.subreddit = '';
@@ -247,7 +260,16 @@ $(function() {
 	});
 	
 	$('#nsfw_toggle').on('click', function (e) {
-		$('body').toggleClass('sfw');
+		if ($('body').hasClass('sfw')) {
+			$('#ans_yes').one('click', function() {
+				$('body').removeClass('sfw');
+				$('#nsfw_toggle').addClass('active');
+			});
+			$('#confirm_modal').modal('show');
+		} else {
+			$('body').addClass('sfw');
+			$('#nsfw_toggle').addClass('active');
+		}
 	});
 	
 	$('.navbar a').on('click', function(e) {
