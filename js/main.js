@@ -5,7 +5,7 @@ var App = function() {
 	var subreddit = null;
 	var sorting = null;
 	var api = new Snoocore({ 
-		userAgent: 'ReReR/0.2 by netcrawler',
+		userAgent: 'ReReR/0.3.1 by netcrawler',
 	    oauth: { 
 	        type: 'web',
 	        consumerKey: 'hBA0ehFp--9Xzw',
@@ -153,7 +153,6 @@ var App = function() {
 			});
 			$html.find('[data-fullscreen]').on('click', function(e) {
 				e.preventDefault();
-				console.log(e, $(e.currentTarget).closest('.list-group'));
 				$(e.currentTarget).closest('.list-group').toggleClass('fullscreen');
 				return false;
 			});
@@ -201,8 +200,13 @@ var App = function() {
 				promise = api('/r/$subreddit/' + sorting).listing({ 
 					$subreddit: subreddit, 
 					limit: 50 
-				});	
-			}		
+				});
+				api('/r/$subreddit/about.json').get({
+					$subreddit: subreddit
+				}).then(function(info) {
+					document.title = info.data.title;
+				});
+			}
 			updateUI();
 			setPath();
 			loadMore();	
@@ -295,7 +299,7 @@ var App = function() {
 		$('[data-sorting]').on('click', function(e) {
 			e.preventDefault();
 			var _sorting = $(e.currentTarget).data('sorting');
-			setLocation(null, _sorting);
+			setLocation(subreddit, _sorting);
 			return false;
 		});
 		if (store.get('disclaimer')) {
