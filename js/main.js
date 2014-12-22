@@ -35,12 +35,6 @@ var App = function() {
 					  url: item.url 
 				  });
 			  }
-			  _.defer(function() {
-				  var local = store.get('typeahead');
-				  local = _.union(local, matches);
-				  console.log(local);
-				  store.set('typeahead', local);
-			  });
 			  return matches;
 		  }
 	  }
@@ -157,6 +151,12 @@ var App = function() {
 				var $elem = $('<iframe class="embed-responsive-item" src="'+src+'" frameborder="0" scrolling="no" wmode="Opaque" allowfullscreen />');
 				$embed.removeAttr('data-embed').removeClass('placeholder').empty().append($elem);
 			});
+			$html.find('[data-fullscreen]').on('click', function(e) {
+				e.preventDefault();
+				console.log(e, $(e.currentTarget).closest('.list-group'));
+				$(e.currentTarget).closest('.list-group').toggleClass('fullscreen');
+				return false;
+			});
 			$html.css('opacity', 0);
 		    $container.append($html);
 		    imagesLoaded($container[0], lazyLayout);
@@ -191,6 +191,7 @@ var App = function() {
 			subreddit = _subreddit;
 			sorting = _sorting;
 			$container.empty();
+			$('body').scrollTop(0);
 			columizer.reset();
 			if (subreddit == '') {
 				promise = api('/'+sorting).listing({ 
@@ -307,34 +308,14 @@ var App = function() {
 	}
 
 	function initTypeahead() {
-		var cached_data = store.get('typeahead');
-		if (_.isEmpty(cached_data)) {
-			cached_data = [];
-		}
 		bloodhound.initialize();
-		var locals = new Bloodhound({
-		  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-		  queryTokenizer: Bloodhound.tokenizers.whitespace,
-		  local: cached_data
-		});
 		$subreddit.typeahead({
 			  hint: true,
 			  highlight: true,
 			  minLength: 1
-			}, 
-			{
-			  name: 'cached-subreddits',
-			  templates: {
-				  header: 'Cached'
-			  },
-			  displayKey: 'value',
-			  source: locals.ttAdapter()
 			},
 			{
 			  name: 'subreddits',
-			  templates: {
-				  header: 'Fetched'
-			  },
 			  displayKey: 'value',
 			  source: bloodhound.ttAdapter()
 			}

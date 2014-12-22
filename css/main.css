@@ -23,6 +23,12 @@ video {
 	visibility: hidden;
 }
 
+.sfw a.nsfw,
+.sfw .nsfw a {
+	pointer-events: none;
+	cursor: not-allowed;
+}
+
 .sfw .nsfw,
 .sfw a.nsfw:hover,
 .sfw a.nsfw:focus {
@@ -46,6 +52,43 @@ video {
 
 .sfw .nsfw.placeholder::before {
 	content: none;
+}
+
+.fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1100;
+	background: rgba(0,0,0,1.0);
+	overflow: auto;
+}
+
+.fullscreen .item-raw {
+	min-height: 100%;
+}
+
+.fullscreen .item-text {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	color: white;
+	border: 0;
+	background: rgba(0,0,0,0.5);
+	pointer-events: none;
+}
+
+.fullscreen .item-text p {
+	margin: 0;
+}
+
+.fullscreen .item-control {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
 }
 
 .placeholder::before {
