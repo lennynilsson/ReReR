@@ -1,8 +1,8 @@
 # ReReR - RedditReadR
 
-[Reddit Reader](http://lennynilsson.github.io/ReReR/) - Read Reddit like it was Pinterest
-
+Read Reddit like it was Pinterest
 A static one page application that fetches posts via [Reddit API](http://www.reddit.com/dev/api)
+Check it out: [http://lennynilsson.github.io/ReReR/](http://lennynilsson.github.io/ReReR/)
 
 ## Third party resources
 
@@ -17,4 +17,4 @@ A static one page application that fetches posts via [Reddit API](http://www.red
  * [Markdown.js](https://github.com/evilstreak/markdown-js) - A markdown html compiler
  * [store.js](https://github.com/marcuswestin/store.js/) - A local storage interface
  * [Modernizr](http://modernizr.com/) - Cross browser enhancements
- * [Reddit icon](https://www.iconfinder.com/icons/88488/reddit_icon)
+ * [Reddit icon](https://www.iconfinder.com/icons/88488/reddit_icon) - A Reddit icon
