@@ -1,7 +1,7 @@
 # ReReR - RedditReadR
 
-Read Reddit like it was Pinterest
-A static one page application that fetches posts via [Reddit API](http://www.reddit.com/dev/api)
+Read Reddit like it was Pinterest. A static one page application that uses [Reddit API](http://www.reddit.com/dev/api) to fetch Reddit posts.
+
 Check it out: [http://lennynilsson.github.io/ReReR/](http://lennynilsson.github.io/ReReR/)
 
 ## Third party resources
