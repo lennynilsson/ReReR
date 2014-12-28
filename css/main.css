@@ -46,6 +46,10 @@ video {
 	text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
+.item-gif [data-gif] {
+	border: 5px solid;
+}
+
 .placeholder {
 	cursor: pointer;	
 }
@@ -136,14 +140,14 @@ iframe {
 	position: relative;
 }
 
-.item {
+.card {
 	word-wrap: break-word;
 	max-width: 100%;
 	width: 480px;
 	float: left;
 }
 
-.item .list-group {
+.card .list-group {
 	margin-bottom: 0;
 }
 

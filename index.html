@@ -85,28 +85,33 @@
 	<script src="js/vendor/bootstrap.min.js" type="text/javascript"></script>
 	<script src="js/vendor/Snoocore-standalone.js" type="text/javascript"></script>
 	<script src="js/vendor/handlebars-v2.0.0.js" type="text/javascript"></script>
-	<script src="js/vendor/imagesloaded.pkgd.min.js" type="text/javascript"></script>
 	<script src="js/vendor/typeahead.bundle.min.js" type="text/javascript"></script>
 	<script src="js/vendor/markdown.min.js" type="text/javascript"></script>
 	<script src="js/vendor/underscore-min.js" type="text/javascript"></script>
 	<script src="js/vendor/store+json2.min.js" type="text/javascript"></script>
 	<script src="js/Columizer.js" type="text/javascript"></script>
+	<script src="js/CardProvider.js" type="text/javascript"></script>
 	<script src="js/main.js" type="text/javascript"></script>
 
 	<script id="entry-template" type="text/x-handlebars-template">
-	<div class="item">
+	<div class="card" data-id="{{id}}" style="opacity:0;">
 		<div class="list-group">
 
 			{{#if content_embed}}
 			<div class="list-group-item item-embeded embed-responsive placeholder embed-responsive-4by3{{#if nsfw}} nsfw{{/if}}" data-embed="{{content_embed}}">
-				{{#if content_embed_thumb}}
-				<img class="img-responsive" src="{{content_embed_thumb}}" alt="{{title}}">
+				{{#if content_thumb}}
+				<img class="img-responsive" src="{{content_thumb}}" alt="{{title}}">
 				{{/if}}
 			</div>		
 			{{/if}}
 			{{#if content_image}}
 			<a class="list-group-item item-image full{{#if nsfw}} nsfw{{/if}}" href="{{source_url}}" target="_blank">
-				<img class="img-responsive" src="{{content_image}}" alt="{{title}}">
+				<img class="img-responsive" data-src="{{content_image}}" alt="{{title}}">
+			</a>
+			{{/if}}
+			{{#if content_gif}}
+			<a class="list-group-item item-gif full{{#if nsfw}} nsfw{{/if}}" href="{{source_url}}" target="_blank">
+				<img class="img-responsive" data-src="{{content_thumb}}" data-gif="{{content_gif}}" alt="{{title}}">
 			</a>
 			{{/if}}
 			{{#if content_text}}
