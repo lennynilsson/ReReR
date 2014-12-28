@@ -156,6 +156,20 @@ var App = function() {
 				store.set('disclaimer', true);
 			});			
 		}
+		/*
+		$('#subreddit-form').keypress(function(e) {
+			if (e.which == 13) {
+				setLocation($subreddit.val(), sorting);
+				return false;
+			}
+		});
+		*/
+		$('#subreddit-form').submit(function(e) {
+			e.preventDefault();
+			$subreddit.typeahead('close');
+			setLocation($subreddit.val(), sorting);
+			return false;
+		});
 	}
 
 	function initTypeahead() {
@@ -207,3 +221,6 @@ var app = new App();
 $(function() {
 	app.init();
 });
+
+
+

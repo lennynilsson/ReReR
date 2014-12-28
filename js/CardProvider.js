@@ -6,11 +6,11 @@
 
 var CardProvider = function(_settings) {
 
-    var settings = $.extend({
+    var settings = _.extend({
 		subreddit: '',
 		sorting: 'hot',
 		limit: 50,
-		timeout: 30 * 1000,
+		timeout: 5 * 1000,
 		onBeforeLoad: function() {},
 		onLoad: function(id, $card, available) {},
 		onAfterLoad: function() {},
@@ -26,6 +26,74 @@ var CardProvider = function(_settings) {
 	var firstAvailableId = -1;
 	var availableIds = [];
 	var self = this;
+	var filters = [
+		{
+			on: /^https?:\/\/(?:i\.imgur|imgur|m\.imgur)\.com\/(?:a|gallery)\/(.*)/i,
+			convert: function(content, url, match) {
+				var id = match[1];
+				content.content_embed = 'http://imgur.com/a/'+id+'/embed';
+			} 
+		},
+		{
+			on: /^https?:\/\/www\.gfycat\.com\/\/(.*)/i,
+			convert: function(content, url, match) {
+				var id = match[1];
+				//zippy, fat, giant
+				content.content_gif = 'http://zippy.gfycat.com/' + id + '.gif';
+			} 
+		},
+		{
+			on: /^https?:\/\/www\.tedtalks\.com\/talks\/(.*)/i,
+			convert: function(content, url, match) {
+				var id = match[1];
+				content.content_embed = 'https://embed-ssl.ted.com/talks/' + id + '.html';
+			} 
+		},
+		{
+			on: /^https?:\/\/www\.vimeo\.com\/(.*)/i,
+			convert: function(content, url, match) {
+				var id = match[1];
+				content.content_embed = 'https://player.vimeo.com/video/' + id;
+			} 
+		},
+		{
+			on: /^https?:\/\/(?:i\.imgur|imgur|m\.imgur)\.com\/(.*)/i,
+			convert: function(content, url, match) {
+				var id = match[1];
+				if (endsWith(id, '.gif')) {
+					content.content_gif = 'http://i.imgur.com/' + id;
+				} else if (endsWith(id, '.jpg')) {
+					content.content_image = 'http://i.imgur.com/' + id;
+				} else if (endsWith(id, '.gifv')) {
+					content.content_gif = 'http://i.imgur.com/' + id.slice(0, -1);
+				} else {
+		    		content.content_image = 'http://i.imgur.com/' + id + '.jpg';
+				}
+			} 
+		},
+		{
+			on: /^https?:\/\/youtu\.be\/(.*)/i,
+			convert: function(content, url, match) {
+				var id = match[1];
+				content.content_embed = 'http://www.youtube.com/embed/' + id;
+			} 
+		},
+		{
+			on: /^https?:\/\/vine\.co\/(.*)/i,
+			convert: function(content, url, match) {
+				var id = match[1];
+				content.content_embed = 'https://vine.co/v/' + id + '/embed/simple?audio=1';
+			} 
+		},
+		{
+			on: /^https?:\/\/(?:youtube\.com|youtube\.com\/watch|m\.youtube\.com\/watch|www\.youtube\.com\/watch)\/?\?(.*)/i,
+			convert: function(content, url, match) {
+				var query = getQueryParts(match[1]);
+				//console.log(query);
+				content.content_embed = 'http://www.youtube.com/embed/' + query.v;
+			} 
+		}
+	];
 
 	function init() {
 		api = new Snoocore({ 
@@ -93,87 +161,104 @@ var CardProvider = function(_settings) {
 		return s1.substring(s1.length - s2.length, s1.length) === s2;
 	}
 
+	function exposeLinks(html) {
+		return _.unescape(html).replace(/[\s\n]*(\/u\/([\w]+))[\s\n]*/mg, function() {
+			var full = arguments[0];
+			var match = arguments[1];
+			var user = arguments[2];
+			var replacement = '<a href="http://www.reddit.com/user/'+user+'" target="_blank">&#47;u&#47;'+user+'</a>';
+			return full.replace(match, replacement);
+		}).replace(/[\s]*(\/r\/([\w]+))[\s]*/mg, function() {
+			var full = arguments[0];
+			var match = arguments[1];
+			var subreddit = arguments[2];
+			var replacement = '<a href="http://reddit.com/r/'+subreddit+'" target="_blank">&#47;r&#47;'+subreddit+'</a>';
+			return full.replace(match, replacement);
+		});/*.replace(/(https?:\/\/[^\s<]{2,})/mi, function() {
+			var full = arguments[0];
+			var url = arguments[1];
+			return '<a href="'+url+'" target="_blank">'+url+'</a>';
+		});*/
+	}
+
+	function getQueryParts(query) {
+		var parts = {};
+		var vars = query.replace(/&amp;/g, '&').split('&');
+		for (var i in vars) {
+			var pair = vars[i].split('=');
+			parts[pair[0]] = pair[1];
+		}
+		return parts;
+	}
+
+	function filterContent(url, content) {
+		var matched = false;
+		for (var i in filters) {
+			var filter = filters[i];
+			var match = url.match(filter.on);
+			if (match != null) {
+				filter.convert(content, url, match);
+				matched = true;
+				break;
+			}
+		}
+		return matched;
+	}
+
 	function parseItem(item, item_id) {
 		var data = item.data;
-		var content_image = false;
-		var content_text = false;
-		var content_raw = false;
-		var content_gif = false;
-		var content_embed = false;
-		var content_thumb = false;
+		var content = {
+			content_text: false,
+			content_image: false,
+			content_gif: false,
+			content_raw: false,
+			content_embed: false,
+			content_thumb: false
+		};
 		if (data.title && 0 < data.title.trim().length) {
-			content_text = data.title;
+			content.content_text = data.title;
 		}
-		if (beginsWith(data.url, 'http://m.imgur.com/a/')
-			|| beginsWith(data.url, 'http://imgur.com/a/')
-			|| beginsWith(data.url, 'http://imgur.com/gallery/')) {
-			var id = getLastPart(data.url);
-			content_embed = 'http://imgur.com/a/'+id+'/embed';
-		} else if (beginsWith(data.url, 'http://www.gfycat.com/')) {
-			var id = getLastPart(data.url);
-			//zippy, fat, giant
-			content_gif = 'http://zippy.gfycat.com/' + id + '.gif';
-		} else if (data.source_url && beginsWith(data.source_url, 'http://www.gfycat.com/')) {
-			var id = getLastPart(data.source_url);
-			//zippy, fat, giant
-			content_gif = 'http://zippy.gfycat.com/' + id + '.gif';
-		} else if (beginsWith(data.url, 'http://imgur.com/')
-				|| beginsWith(data.url, 'http://i.imgur.com/')
-				|| beginsWith(data.url, 'http://31.media.tumblr.com/')){
-			var id = getLastPart(data.url);
-			if (endsWith(id, '.gif')) {
-				content_gif = 'http://i.imgur.com/' + id;
-			} else if (endsWith(id, '.gifv')) {
-				content_gif = 'http://i.imgur.com/' + id.slice(0, -1);
-			} else {
-	    		content_image = 'http://i.imgur.com/' + id + '.jpg';
-			}
-		} else if (beginsWith(data.url, 'http://www.ted.com/talks/')) {
-			var id = getLastPart(data.url);
-			content_embed = 'https://embed-ssl.ted.com/talks/' + id + '.html';
-		} else if (beginsWith(data.url, 'http://youtu.be/')) {
-			var id = getLastPart(data.url);
-			content_embed = 'http://www.youtube.com/embed/' + id;
-		} else if (beginsWith(data.url, 'https://www.youtube.com/watch')
-				|| beginsWith(data.url, 'http://www.youtube.com/watch')) {
-			var id = getLastPart(data.url, 'v=');
-			content_embed = 'http://www.youtube.com/embed/' + id;
-		} else if (data.is_self && data.selftext != null && 0 < data.selftext.trim().length) {
-	    	content_raw = markdown.toHTML(data.selftext);
-		} else if (data.media 
-				&& data.media.oembed 
-				&& data.media.oembed.content) {
-			content_raw = content;
-		} else if (endsWith(data.url, '.gif')) {
-			content_gif = data.url;
-		} else if (data.thumbnail && 0 < data.thumbnail.length 
-				&& data.thumbnail != 'default' 
-				&& data.thumbnail != 'self' 
-				&& data.thumbnail != 'nsfw') {
-			content_image = data.thumbnail;
-		} else if (content_text == false) {
-			content_text = data.url;
-		}
-		
 		if (data.thumbnail 
 				&& 0 < data.thumbnail.length 
 				&& data.thumbnail != 'default' 
 				&& data.thumbnail != 'self' 
 				&& data.thumbnail != 'nsfw') {
-			content_thumb = data.thumbnail;	
+			content.content_thumb = data.thumbnail;	
 		}
+		var url = data.url || data.source_url;
 		
-		return template({
+		var matched = filterContent(url, content);
+
+		// Populate with fallback methods 
+		if (!matched) {
+			if (data.is_self && data.selftext != null && 0 < data.selftext.trim().length) {
+				var html = markdown.toHTML(data.selftext);
+				content.content_raw = html;
+			} else if (data.media 
+					&& data.media.oembed 
+					&& data.media.oembed.content) {
+				content.content_raw = content;
+			} else if (endsWith(data.url, '.gif')) {
+				content.content_gif = data.url;
+			} else if (data.thumbnail && 0 < data.thumbnail.length 
+					&& data.thumbnail != 'default' 
+					&& data.thumbnail != 'self' 
+					&& data.thumbnail != 'nsfw') {
+				content.content_image = data.thumbnail;
+			} else if (content.content_text == false) {
+				content.content_text = data.url;
+			}				
+		}
+
+		if (content.content_raw) {
+			content.content_raw = exposeLinks(content.content_raw);
+		}
+
+		return template(_.extend(content, {
 			id: item_id,
 			title: data.title,
 			source: data.domain,
-			source_url: data.url,
-			content_text: content_text,
-			content_image: content_image,
-			content_gif: content_gif,
-			content_raw: content_raw,
-			content_embed: content_embed,
-			content_thumb: content_thumb,
+			source_url: url,
 			nsfw: data.over_18,
 			rating: data.score,
 			num_comments: data.num_comments,
@@ -183,7 +268,7 @@ var CardProvider = function(_settings) {
 			subreddit: data.subreddit,
 			subreddit_path: '/r/' + data.subreddit,
 			subreddit_url: 'http://reddit.com/r/' + data.subreddit
-		});		
+		}));		
 	}
 
 	function loadImage(src, cb) {
@@ -217,9 +302,7 @@ var CardProvider = function(_settings) {
 			var img = new Image();
 			available = false;
 			loadImage(src, function(status, img) {
-				if (status == 'success') {
-					$elem.attr('src', src).removeAttr('data-src');
-				}
+				$elem.attr('src', src).removeAttr('data-src');
 				setAvailable(id);
 			});
 		});
@@ -230,9 +313,7 @@ var CardProvider = function(_settings) {
 			var $elem = $(e.currentTarget);
 			var src = $elem.data('gif');
 			loadImage(src, function(status, img) {
-				if (status == 'success') {
-					$elem.attr('src', src).removeAttr('data-gif');
-				}
+				$elem.attr('src', src).removeAttr('data-gif');
 				settings.onAvailable(id);
 			});
 			return false;
@@ -252,7 +333,7 @@ var CardProvider = function(_settings) {
 			var id = lastCardId;
 			var $card = $(parseItem(item, id));
 			var available = addHooks($card, id);
-			settings.onLoad(id, $card, available);
+			settings.onLoad(id, $card);
 			if (available) {
 				setAvailable(id);
 			}

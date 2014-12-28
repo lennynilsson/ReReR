@@ -6,7 +6,7 @@
 
 var Columizer = function(_settings) {
 	
-    var settings = $.extend({
+    var settings = _.extend({
 		card: '.card',
 		container: '#content',
 		columnSize: 480,
@@ -67,13 +67,13 @@ var Columizer = function(_settings) {
 	}
 
 	function layoutCard(card) {
-		card.$card.css('width', columnWidth)
+		card.$card.css('width', columnWidth);
 		if (!card.available) {
-			card.$card.css({
-				position: 'absolute',
-				opacity: 1.0
-			}).appendTo($container);
 			card.available = true;
+			card.$card.css({
+				position: 'absolute'
+			}).appendTo($container);
+			//console.log('Shown: ', card.id);
 		}
 		var cardHeight = card.$card.outerHeight();
 		var column = getShortestColumn();
@@ -110,11 +110,12 @@ var Columizer = function(_settings) {
 
 	}
 
-	function add(id, $card, available) {
+	function add(id, $card) {
+		//console.log('Added: ', id);
 		cards.push({
 			id : id,
 			$card: $card,
-			available: available
+			available: false
 		});
 	}
 
