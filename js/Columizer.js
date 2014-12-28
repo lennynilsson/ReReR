@@ -46,7 +46,7 @@ var Columizer = function(_settings) {
 	function reset() {
 		cards = [];
 		lastShownId = -1;
-		$container.css('height', 'initial').find(settings.card).remove();
+		$container.css('height', 'initial').empty();
 		resetLayout();
 	}
 

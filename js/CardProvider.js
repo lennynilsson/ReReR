@@ -42,6 +42,9 @@ var CardProvider = function(_settings) {
 	function reset(subreddit, sorting) {
 		settings.subreddit = subreddit;
 		settings.sorting = sorting;
+		lastCardId = -1;
+		firstAvailableId = -1;
+		availableIds = [];
 		if (subreddit == '') {
 			promise = api('/'+settings.sorting).listing({ 
 				limit: settings.limit 
@@ -52,9 +55,6 @@ var CardProvider = function(_settings) {
 				limit: settings.limit 
 			});
 		}
-		lastCardId = -1;
-		firstAvailableId = -1;
-		availableIds = [];
 		settings.onReset(subreddit, sorting);
 		more();
 	}

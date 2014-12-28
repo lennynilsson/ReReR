@@ -43,13 +43,14 @@ var App = function() {
 	}
 	
 	function setLocation(_subreddit, _sorting, _title) {	
-		var changed = sorting != _sorting && subreddit != _subreddit;
+		var changed = sorting != _sorting || subreddit != _subreddit;
 		if (_.isEmpty(_subreddit)) {
 			_subreddit = '';
 		}
 		if (_.isEmpty(_sorting)) {
 			_sorting = 'hot';
 		}
+		console.log(_subreddit, _sorting);
 		if (changed) {
 			if (!_.isEmpty(_title)) {
 				document.title = _title;
@@ -60,8 +61,8 @@ var App = function() {
 			updateUI();
 			setPath();
 			columizer.reset();
+			$load_more.button('loading').removeAttr('disabled');
 			cardProvider.reset(subreddit, sorting);
-			$load_more.button('reset').removeAttr('disabled');
 			$('body').scrollTop(0);
 			/*
 			if (subreddit != '') {
