@@ -9,7 +9,7 @@ var Columizer = function(_settings) {
     var settings = _.extend({
 		card: '.card',
 		container: '#content',
-		columnSize: 480,
+		columnSize: 400,
 		gutterSize: 15,
 		fetch: function(callback) { callcack([]); }
     }, _settings);
@@ -21,10 +21,10 @@ var Columizer = function(_settings) {
 	var columns = [];
 	var offsets = [];
 	var cards = [];
-	var lastShownId = -1;
 	
 	function init() {
 		$(window).resize(_.debounce(function() {
+			console.log('Resize');
 			resetLayout();
 			layout(0, cards.length);
 		}, 300));
@@ -41,11 +41,11 @@ var Columizer = function(_settings) {
 			columns[c] = 0;
 			offsets[c] = c * columnWidth + c * settings.gutterSize;
 		}
+		console.log('Width: ', width, ' Column width: ', columnWidth, ' Column count: ', columnCount);
 	}
 	
 	function reset() {
 		cards = [];
-		lastShownId = -1;
 		$container.css('height', 'initial').empty();
 		resetLayout();
 	}
@@ -67,62 +67,57 @@ var Columizer = function(_settings) {
 	}
 
 	function layoutCard(card) {
-		card.$card.css('width', columnWidth);
-		if (!card.available) {
-			card.available = true;
-			card.$card.css({
-				position: 'absolute'
-			}).appendTo($container);
-			//console.log('Shown: ', card.id);
-		}
+		//console.log(card);
 		var cardHeight = card.$card.outerHeight();
 		var column = getShortestColumn();
 		var top = columns[column];
 		var left = offsets[column];
 		card.$card.css({
 			top: top,
-			left: left
+			left: left,
+			width: columnWidth
 		});
 		if (0 < cardHeight) {
 			addColumnLength(column, settings.gutterSize + cardHeight);
 		}
 	}
 	
-	function layout(from, to) {
-		to = Math.min(to, cards.length);
+	function layout() {
+		resetLayout();
 		// Position cards
-		for (var i = from; i < to; i++) {
+		for (var i = 0; i < cards.length; i++) {
 			layoutCard(cards[i]);
 		}
 		$container.css('height', Math.max.apply(Math, columns));
 	}
 
 	function show(id) {
-		if (lastShownId <= id) {
-			// Create layout from last shown id
-			layout(lastShownId + 1, id + 1);
-			lastShownId = id;			
-		} else {
-			// Redo layout
-			resetLayout();
-			layout(0, lastShownId + 1);
-		}
-
+		layout(0, cards.length);
 	}
 
 	function add(id, $card) {
-		//console.log('Added: ', id);
-		cards.push({
+		console.log('Added: ', id);
+		var card = {
 			id : id,
-			$card: $card,
-			available: false
-		});
+			$card: $card
+		};
+		cards.push(card);
+		card.$card.css({
+			/* All cards are positioned absolute */
+			position: 'absolute',
+			/* Initially position the card to the left of the window */
+			left: width,
+			/* Set width to get an accurate height later */
+			width: columnWidth
+		}).appendTo($container);
 	}
 
 	return {
 		init: init,
 		reset: reset,
-		layout: layout,
+		layout: function() {
+			layout(0, cards.length);
+		},
 		show: show,
 		add: add,
 		settings: settings,

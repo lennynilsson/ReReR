@@ -136,9 +136,9 @@ var CardProvider = function(_settings) {
 		while(0 < availableIds.length && availableIds[0] == nextAvailableId + 1) {
 			nextAvailableId = availableIds.shift();
 		}
+		settings.onAvailable(id);
 		if (firstAvailableId < nextAvailableId) {
 			firstAvailableId = nextAvailableId;
-			settings.onAvailable(firstAvailableId);
 			if (firstAvailableId == lastCardId) {
 				settings.onAllAvailable();
 			}
@@ -271,18 +271,18 @@ var CardProvider = function(_settings) {
 		}));		
 	}
 
-	function loadImage(src, cb) {
+	function loadImage($elem, src, cb) {
 		var img = new Image();
 		var timer = setTimeout(function() {
-			img.onload = null;
-			cb('fail', img);
+			//$elem.onload = null;
+			cb('fail');
 		}, settings.timeout);
 		img.onload = function() {
 			clearTimeout(timer);
-			cb('success', img);
+			cb('success');
 		};
 		img.src = src;
-		return img;
+		$elem.attr('src', src);
 	}
 
 	function addHooks($card, id) {
@@ -301,8 +301,8 @@ var CardProvider = function(_settings) {
 			var src = $elem.data('src');
 			var img = new Image();
 			available = false;
-			loadImage(src, function(status, img) {
-				$elem.attr('src', src).removeAttr('data-src');
+			loadImage($elem, src, function(status) {
+				console.log('Loaded: ', status, src);
 				setAvailable(id);
 			});
 		});
@@ -312,8 +312,8 @@ var CardProvider = function(_settings) {
     		event.stopPropagation ? event.stopPropagation() : (event.cancelBubble=true);
 			var $elem = $(e.currentTarget);
 			var src = $elem.data('gif');
-			loadImage(src, function(status, img) {
-				$elem.attr('src', src).removeAttr('data-gif');
+			loadImage($elem, src, function(status) {
+				console.log('Loaded: ', status, src);
 				settings.onAvailable(id);
 			});
 			return false;
