@@ -24,7 +24,7 @@ var Columizer = function(_settings) {
 	
 	function init() {
 		$(window).resize(_.debounce(function() {
-			console.log('Resize');
+			//console.log('Resize');
 			resetLayout();
 			layout(0, cards.length);
 		}, 300));
@@ -33,7 +33,7 @@ var Columizer = function(_settings) {
 
 	function resetLayout() {
 		width = $container.innerWidth();
-		columnCount = Math.floor((width + settings.gutterSize) / (settings.columnSize + settings.gutterSize));
+		columnCount = Math.max(1, Math.floor((width + settings.gutterSize) / (settings.columnSize + settings.gutterSize)));
 		columnWidth = (width - (settings.gutterSize * (columnCount - 1))) / columnCount;
 		columns = [];
 		offsets = [];
@@ -41,7 +41,7 @@ var Columizer = function(_settings) {
 			columns[c] = 0;
 			offsets[c] = c * columnWidth + c * settings.gutterSize;
 		}
-		console.log('Width: ', width, ' Column width: ', columnWidth, ' Column count: ', columnCount);
+		//console.log('Width: ', width, ' Column width: ', columnWidth, ' Column count: ', columnCount);
 	}
 	
 	function reset() {
@@ -75,7 +75,8 @@ var Columizer = function(_settings) {
 		card.$card.css({
 			top: top,
 			left: left,
-			width: columnWidth
+			width: columnWidth,
+			opacity: 1.0
 		});
 		if (0 < cardHeight) {
 			addColumnLength(column, settings.gutterSize + cardHeight);
@@ -96,17 +97,17 @@ var Columizer = function(_settings) {
 	}
 
 	function add(id, $card) {
-		console.log('Added: ', id);
+		//console.log('Added: ', id);
 		var card = {
 			id : id,
 			$card: $card
 		};
-		cards.push(card);
+		cards[id] = card;
 		card.$card.css({
 			/* All cards are positioned absolute */
 			position: 'absolute',
-			/* Initially position the card to the left of the window */
-			left: width,
+			/* Hide the card until it is loaded */
+			opacity: 0.0,
 			/* Set width to get an accurate height later */
 			width: columnWidth
 		}).appendTo($container);

@@ -62,7 +62,7 @@ var CardProvider = function(_settings) {
 				var id = match[1];
 				if (endsWith(id, '.gif')) {
 					content.content_gif = 'http://i.imgur.com/' + id;
-				} else if (endsWith(id, '.jpg')) {
+				} else if (endsWith(id, '.jpg') || endsWith(id, '.png')) {
 					content.content_image = 'http://i.imgur.com/' + id;
 				} else if (endsWith(id, '.gifv')) {
 					content.content_gif = 'http://i.imgur.com/' + id.slice(0, -1);
@@ -89,7 +89,6 @@ var CardProvider = function(_settings) {
 			on: /^https?:\/\/(?:youtube\.com|youtube\.com\/watch|m\.youtube\.com\/watch|www\.youtube\.com\/watch)\/?\?(.*)/i,
 			convert: function(content, url, match) {
 				var query = getQueryParts(match[1]);
-				//console.log(query);
 				content.content_embed = 'http://www.youtube.com/embed/' + query.v;
 			} 
 		}
@@ -302,7 +301,7 @@ var CardProvider = function(_settings) {
 			var img = new Image();
 			available = false;
 			loadImage($elem, src, function(status) {
-				console.log('Loaded: ', status, src);
+				//console.log('Loaded: ', status, src);
 				setAvailable(id);
 			});
 		});
@@ -313,7 +312,7 @@ var CardProvider = function(_settings) {
 			var $elem = $(e.currentTarget);
 			var src = $elem.data('gif');
 			loadImage($elem, src, function(status) {
-				console.log('Loaded: ', status, src);
+				//console.log('Loaded: ', status, src);
 				settings.onAvailable(id);
 			});
 			return false;
@@ -338,6 +337,7 @@ var CardProvider = function(_settings) {
 				setAvailable(id);
 			}
 	    }
+	    settings.onAllAvailable();
 	}
 
 	function more() {
