@@ -57,17 +57,25 @@ var CardProvider = function(_settings) {
 			} 
 		},
 		{
-			on: /^https?:\/\/(?:i\.imgur|imgur|m\.imgur)\.com\/(.*)/i,
+			on: /^https?:\/\/(?:i\.imgur|imgur|m\.imgur)\.com\/(.*)(?:#[0-9]*)/i,
 			convert: function(content, url, match) {
-				var id = match[1];
-				if (endsWith(id, '.gif')) {
-					content.content_gif = 'http://i.imgur.com/' + id;
-				} else if (endsWith(id, '.jpg') || endsWith(id, '.png')) {
-					content.content_image = 'http://i.imgur.com/' + id;
-				} else if (endsWith(id, '.gifv')) {
-					content.content_gif = 'http://i.imgur.com/' + id.slice(0, -1);
+				var id = match[1].split(',');
+				if (1 < id.length) {
+					content.content_images = [];
+					for (var i = 0; i < id.length; i++) {
+						content.content_images.push({imagre_part: id[i]});
+					};
 				} else {
-		    		content.content_image = 'http://i.imgur.com/' + id + '.jpg';
+					id = id[0];
+					if (endsWith(id, '.gif')) {
+						content.content_gif = 'http://i.imgur.com/' + id;
+					} else if (endsWith(id, '.jpg') || endsWith(id, '.png')) {
+						content.content_image = 'http://i.imgur.com/' + id;
+					} else if (endsWith(id, '.gifv')) {
+						content.content_gif = 'http://i.imgur.com/' + id.slice(0, -1);
+					} else {
+			    		content.content_image = 'http://i.imgur.com/' + id + '.jpg';
+					}
 				}
 			} 
 		},
@@ -79,7 +87,7 @@ var CardProvider = function(_settings) {
 			} 
 		},
 		{
-			on: /^https?:\/\/vine\.co\/(.*)/i,
+			on: /^https?:\/\/vine\.co\/(?:v\/)(.*)/i,
 			convert: function(content, url, match) {
 				var id = match[1];
 				content.content_embed = 'https://vine.co/v/' + id + '/embed/simple?audio=1';
@@ -294,6 +302,7 @@ var CardProvider = function(_settings) {
 			var src = $embed.data('embed');
 			var $elem = $('<iframe class="embed-responsive-item" src="'+src+'" frameborder="0" scrolling="no" wmode="Opaque" allowfullscreen />');
 			$embed.removeAttr('data-embed').removeClass('placeholder').empty().append($elem);
+			settings.onAvailable(id);
 		});
 		$card.find('[data-src]').each(function() {
 			var $elem = $(this);

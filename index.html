@@ -110,6 +110,11 @@
 				<img class="img-responsive" data-src="{{content_image}}" alt="{{title}}">
 			</a>
 			{{/if}}
+			{{#each content_images}}
+			<a class="list-group-item item-image full{{#if nsfw}} nsfw{{/if}}" href="{{source_url}}" target="_blank">
+				<img class="img-responsive" data-src="{{image_part}}" alt="{{title}}">
+			</a>
+			{{~/each}}
 			{{#if content_gif}}
 			<a class="list-group-item item-gif full{{#if nsfw}} nsfw{{/if}}" href="{{source_url}}" target="_blank">
 				<img class="img-responsive" data-src="{{content_thumb}}" data-gif="{{content_gif}}" alt="{{title}}">
