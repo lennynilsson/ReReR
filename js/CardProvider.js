@@ -16,6 +16,7 @@ var CardProvider = function(_settings) {
 		onAfterLoad: function() {},
 		onAvailable: function() {},
 		onAllAvailable: function() {},
+		onAction: function() {},
 		onNoMore: function() {},
 		onReset: function(subreddit, sorting) {}
     }, _settings);
@@ -294,15 +295,17 @@ var CardProvider = function(_settings) {
 
 	function addHooks($card, id) {
 		var available = true;
-		$card.find('[data-subreddit]').on('click', function (e) {
-			setLocation($(e.currentTarget).data('subreddit'));
-		});
 		$card.find('[data-embed]').one('click', function(e) {
 			var $embed = $(e.currentTarget);
 			var src = $embed.data('embed');
 			var $elem = $('<iframe class="embed-responsive-item" src="'+src+'" frameborder="0" scrolling="no" wmode="Opaque" allowfullscreen />');
 			$embed.removeAttr('data-embed').removeClass('placeholder').empty().append($elem);
 			settings.onAvailable(id);
+		});
+		$card.find('[data-subreddit]').on('click', function (e) {
+			e.preventDefault();
+			settings.onAction($(e.currentTarget).data('subreddit'));
+			return false;
 		});
 		$card.find('[data-src]').each(function() {
 			var $elem = $(this);

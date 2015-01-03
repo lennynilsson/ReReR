@@ -202,6 +202,9 @@ var App = function() {
 			},
 			onNoMore: function() {
 				$load_more.attr('disabled','disabled');
+			},
+			onAction: function(location) {
+				setLocation(location);
 			}
 		});
 		cardProvider.init();
