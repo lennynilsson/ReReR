@@ -1,0 +1,10 @@
+
+<img class="card img-responsive" ng-if="card.content_image" ng-src="{{card.content_image}}" alt="{{card.title}}">
+<img class="card img-responsive" ng-if="card.content_gif" ng-src="{{card.content_gif}}" alt="{{card.title}}">
+<img class="card img-responsive" ng-repeat="image in card.content_images" ng-src="{{image}}" alt="{{card.title}}">
+<div class="card content-raw" ng-if="card.content_raw">
+	<p class="lead" ng-if="card.content_text">{{card.content_text}}</p>
+	<div ng-bind-html="card.content_raw"></div>
+	<div class="clearfix"></div>
+</div>
+<iframe class="card content-embeded" ng-if="card.content_embed" title="{{card.title}}" ng-src="{{card.content_embed}}" frameborder="0" scrolling="no" height="100%" wmode="Opaque" allowfullscreen />
