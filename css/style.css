@@ -1,0 +1,325 @@
+
+body {
+	padding-top: 70px;
+	background-color: #eee;
+}
+
+.img-responsive {
+	width: 100%;
+	-ms-interpolation-mode: bicubic;
+}
+
+.thumb {
+    float: left;
+    padding-top: 5px;
+    padding-right: 10px;
+    cursor: pointer;
+}
+
+video {
+  width: 100%    !important;
+  height: auto   !important;
+}
+
+.shadow {
+    -webkit-box-shadow: 0px 0px 3px 3px rgba(0,0,0,0.35);
+    -moz-box-shadow: 0px 0px 3px 3px rgba(0,0,0,0.35);
+    box-shadow: 0px 0px 3px 3px rgba(0,0,0,0.35);
+}
+
+.sfw .nsfw > * {
+	visibility: hidden;
+}
+
+.sfw a.nsfw,
+.sfw .nsfw a {
+	pointer-events: none;
+	cursor: not-allowed;
+}
+
+.sfw .nsfw,
+.sfw a.nsfw:hover,
+.sfw a.nsfw:focus {
+	background: #fcc;
+}
+
+.sfw a.nsfw:after,
+.sfw .nsfw.placeholder::after {
+	font-weight: bolder;
+	font-size: 3em;
+	content: "NSFW";
+	position: absolute;
+	top: 0.5em;
+	left: 0.5em;
+	text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.clickable,
+.placeholder {
+	cursor: pointer;	
+}
+
+.sfw .nsfw.placeholder::before {
+	content: none;
+}
+
+.item-text p {
+	cursor: pointer;
+}
+
+@media (max-width: 767px) {
+	.navbar-form {
+	    padding: 5px 0;
+	    margin-top: 0;
+	    margin-right: 0;
+	    margin-bottom: 0;
+	    margin-left: 0;
+	    border-top: none;
+	    border-bottom: none;
+	    -webkit-box-shadow: none;
+	    box-shadow: none;
+	}
+
+	.suggestions {
+		width: 100%;
+	}
+}
+
+.placeholder::after {
+	position: absolute;
+	top: 0.0em;
+	left: 0.4em;
+	font-weight: bolder;
+	font-size: 6em;
+	text-align: left;
+	vertical-align: top;
+	content: "</>";
+	text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+iframe {
+	-webkit-backface-visibility: hidden;
+	-webkit-transform: scale(1);
+}
+
+.white {
+	color: white;
+}
+
+.no-break {
+	white-space: nowrap;
+	word-break: keep-all;
+}
+
+.white:hover, .white:focus {
+	color: #eee;
+}
+
+#content {
+	position: relative;
+}
+
+.item {
+	word-wrap: break-word;
+	max-width: 100%;
+	opacity: 0;
+    -webkit-transition: opacity linear 0.4s;
+    transition: opacity linear 0.4s;
+}
+
+.item .list-group {
+	margin-bottom: 0;
+    cursor: default;
+}
+
+.item .item-raw {
+    max-height: 480px;
+    overflow: hidden;
+}
+
+.item .item-raw.expanded {
+    max-height: none;
+    overflow: auto;
+}
+
+.gutter-sizer {
+	width: 2.5%;
+}
+
+.embed-responsive {
+	padding-top: 0;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.embed-responsive-item {
+	width: 100%;
+}
+
+.list-group-item.full:first-child {
+	padding: 0;
+}
+
+.list-group-item.full:first-child > *,
+.list-group-item:first-child > .embed-responsive-item {
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+}
+
+.form-group {
+    position: relative;
+}
+
+.suggestions {
+    display: block;
+    left: auto;
+    overflow: auto;
+    max-height: 22em;
+}
+
+.suggestion .link {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+}
+
+a, .link {
+	cursor: pointer;	
+}
+
+a.link:hover,
+a.link:focus {
+	text-decoration: none !Important;	
+}
+
+@media (max-width: 768px) {
+	body {
+		padding-top: 60px;
+	}
+	.container-fluid {
+		padding-right: 5px;
+		padding-left: 5px;
+	}
+	.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+		padding-right: 0px;
+		padding-left: 0px;
+	}
+}
+
+/* ==========================================================================
+   Light box
+   ========================================================================== */
+
+body.lightBoxShown {
+    overflow: hidden;
+}
+
+.lightbox-active {
+    overflow: hidden;
+}
+
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    bottom: 0;
+    background: rgba(8, 8, 8, 0.95);
+    z-index: 1040;
+}
+
+.lightbox-header {
+    position: fixed;
+    z-index: 1050;
+    left: 15px;
+    top: 15px;
+    right: 15px;
+}
+
+.lightbox-body {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    z-index: 1045;
+}
+
+.lightbox-body .card {
+	padding-top: 80px;
+}
+
+.content-raw {
+	background: white;
+    padding: 90px 2em 2em;
+    min-height: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.content-embeded {
+	width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Dropdown
+   ========================================================================== */
+
+.tt-dropdown-menu {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	display: block;
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	list-style: none;
+	font-size: 14px;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0,0,0,.15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+	box-shadow: 0 6px 12px rgba(0,0,0,.175);
+	background-clip: padding-box;
+}
+
+.tt-suggestion {
+	display: block;
+	padding: 3px 20px;
+	clear: both;
+	font-weight: 400;
+	line-height: 1.42857143;
+	color: #333;
+	white-space: nowrap;
+	margin: 0;
+}
+
+.tt-hint {
+	color: #eee;
+}
+
+.tt-suggestion:hover, 
+.tt-suggestion:focus,
+.tt-suggestion.tt-cursor {
+	background-image: -webkit-linear-gradient(top,#f5f5f5 0,#e8e8e8 100%);
+	background-image: linear-gradient(to bottom,#f5f5f5 0,#e8e8e8 100%);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#ffe8e8e8', GradientType=0);
+	background-color: #e8e8e8;
+	text-decoration: none;
+	color: #262626;
+	cursor: pointer;
+}

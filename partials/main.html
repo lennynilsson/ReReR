@@ -1,0 +1,132 @@
+<div ng-class="{sfw:sfw}">
+<nav class="navbar navbar-inverse navbar-fixed-top shadow" role="navigation" ng-controller="MenuController">
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" ng-class="{collapsed:collapsed}"
+				ng-click="toggleMenu()">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#/hot">RedditReadR</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="navbar-collapse" ng-class="{collapse:collapsed}">
+			<form id="subreddit-form" class="navbar-form navbar-left">
+			 	<div class="form-group" ng-controller="SuggestController">
+			    	<input type="text"
+				    	class="form-control"
+				    	placeholder="{{placeholder}}"
+                        ng-model="textField"
+                        ng-focus="set()"
+                        ng-blur="reset()"
+                        ng-key="{esc: 'reset()', enter: 'setSubreddit(textField)', up: 'changeActive(highlightedIndex-1)', down: 'changeActive(highlightedIndex+1)'}"
+                        ng-change="suggest()"
+				    	id="subreddit"
+				    	autocomplete="off"
+				    	tabindex="-1" />
+                    <ul class="dropdown-menu suggestions" ng-show="suggestions.length">
+                        <li id="suggest-{{suggestion.name}}"
+                            ng-repeat="suggestion in suggestions"
+                            ng-mouseover="setActive(suggestion)"
+                            ng-class="{active:(true === suggestion.highlighted)}"
+                            class="suggestion link">
+                            <a href="" ng-mousedown="setSubreddit(suggestion.name)"><b>{{suggestion.label}}</b><br><i><small>{{suggestion.name}}</small></i></a>
+                        </li>
+                    </ul>
+			  	</div>
+				<button type="button" class="btn btn-danger" ng-class="{active:!sfw}" ng-click="toggleSafeForWork()">NSFW</button>
+			</form>
+			<ul class="nav navbar-nav navbar-right">
+				<li ng-class="{active:sorting=='hot'}"><a ng-click="setSorting('hot')" title="Hot"><i class="glyphicon glyphicon-fire" aria-hidden="true"></i><span class="hidden-sm"> Hot</span></a></li>
+				<li ng-class="{active:sorting=='new'}"><a ng-click="setSorting('new')" title="New"><i class="glyphicon glyphicon-asterisk" aria-hidden="true"></i><span class="hidden-sm"> New</span></a></li>
+				<li ng-class="{active:sorting=='top'}"><a ng-click="setSorting('top')" title="Top"><i class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></i><span class="hidden-sm"> Top</span></a></li>
+				<li ng-class="{active:sorting=='controversial'}"><a ng-click="setSorting('controversial')" title="Controversial"><i class="glyphicon glyphicon-warning-sign" aria-hidden="true"></i><span class="hidden-sm"> Controversial</span></a></li>
+			</ul>
+		</div>
+		<!-- /.navbar-collapse -->
+	</div>
+	<!-- /.container-fluid -->
+</nav>
+<div class="container-fluid" ng-controller="ListController">
+	<div class="alert alert-warning alert-dismissible" role="alert" ng-class="{hidden:!showDisclaimer}">
+	  <button type="button" class="close" ng-click="showDisclaimer = !showDisclaimer">
+	  	<span aria-hidden="true">&times;</span>
+	  	<span class="sr-only">Close</span></button>
+	  <strong><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Disclaimer!</strong> I assume no responsibility or liability for any loss or damage suffered by any person as a result of the use or misuse of any of the information or content on this website.
+	</div>
+
+	<div ng-container="cards" ng-preload="loadMore()" ng-click="debug()">
+		<div ng-repeat="card in cards track by $index" ng-include="'/partials/card.html'" class="item"></div>
+	</div>
+
+    <div class="clearfix"></div>
+    <button class="btn btn-success btn-lg btn-block" ng-hide="endOfList" ng-disabled="loading" ng-click="loadMore()">{{loading ? 'Loading...' : 'Load more'}}</button>
+
+	<footer>
+		<hr>
+		<p class="text-center">by <a target="_blank" href="https://github.com/lennynilsson">Lenny Nilsson</a> 2015</p>
+	</footer>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="confirm_modal_title" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="confirm_modal_title">Confirm that you are over 18 years old?</h4>
+      </div>
+      <div class="modal-body">
+      	<p>Press yes to confirm that you are over 18 years old.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="ans_no">No</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="ans_yes">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="lightbox" ng-show="lightBoxShown">
+  <div class="lightbox-backdrop">
+    <div class="lightbox-content container-fluid">
+        <div class="lightbox-header panel panel-default">
+            <div class="panel-body">
+                <small>
+                    <span class="no-break">
+                        <span class="glyphicon glyphicon-heart" aria-hidden="true"></span> {{card.rating}}
+                    </span>
+                            &nbsp;
+                    <span class="no-break">
+                        <span class="glyphicon glyphicon glyphicon-comment" aria-hidden="true"></span> {{card.num_comments}}
+                    </span>
+                            &nbsp;
+                    <span class="no-break link" ng-click="setSubreddit(card.subreddit)">
+                        <span class="glyphicon glyphicon-record" aria-hidden="true"></span> #{{card.subreddit_path}}
+                    </span>
+                            &nbsp;
+                    <span class="no-break link" ng-click="open(card.author_url)">
+                        <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> {{card.author}}
+                    </span>
+                            &nbsp;
+                    <span class="no-break link" ng-click="open(card.subreddit_url)">
+                        <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> {{card.subreddit_path}}
+                    </span>
+                            &nbsp;
+                    <span class="no-break link" ng-click="open(card.source_url)">
+                        <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> {{card.source}}
+                    </span>
+                    <button type="button" class="close" ng-click="closeLightBox()" title="Close">&times;</button>
+                </small>
+            </div>
+        </div>
+      <div class="lightbox-body" ng-include="'/partials/lightbox.html'" ng-click="closeLightBox()"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div>
+	<div class="list-group">
+		<div ng-if="card.content_image" class="list-group-item item-image full">
+			<img class="img-responsive clickable" ng-src="{{card.content_image}}" alt="{{card.title}}"
+                 ng-click="showInLightBox(card)">
+		</div>
+		<div ng-if="card.content_gif" class="list-group-item item-gif full">
+			<img class="img-responsive clickable" alt="{{card.title}}" 
+				ng-src="{{card.content_thumb}}"
+		 		ng-click="showInLightBox(card)">
+		</div>
+		<div ng-repeat="image in card.content_images" class="list-group-item item-image full">
+			<img class="img-responsive clickable" ng-src="{{image}}" alt="{{card.title}}"
+                 ng-click="showInLightBox(card)">
+		</div>
+		<div ng-if="card.content_text || card.content_thumb" class="list-group-item item-text">
+            <img class="thumb" ng-src="{{card.content_thumb}}" alt="{{card.title}}"
+                 ng-if="card.content_thumb && !card.content_image && !card.content_gif"
+				 ng-class="{nsfw:card.nsfw}" ng-click="showInLightBox(card)">
+			<p ng-click="showInLightBox(card)">{{card.content_text}}</p>
+            <div class="clearfix"></div>
+		</div>
+		<div ng-if="card.content_raw" class="list-group-item item-raw" ng-click="showInLightBox(card)">
+			<div ng-bind-html="card.content_raw"></div>
+		</div>
+		<div class="list-group-item item-control active"> 
+			<small>
+				<span class="white no-break">
+				<span class="glyphicon glyphicon-heart" aria-hidden="true"></span> {{card.rating}}
+				</span>
+				&nbsp;
+				<span class="white no-break">
+				<span class="glyphicon glyphicon glyphicon-comment" aria-hidden="true"></span> {{card.num_comments}}
+				</span>
+				&nbsp;
+				<span class="white no-break link" ng-click="open(card.comments_url)">
+				<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Post
+				</span>
+                &nbsp;
+				<span class="white no-break link" ng-click="open(card.author_url)">
+				<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> /u/{{card.author}}
+				</span>
+				&nbsp;
+				<span class="white no-break link" ng-click="open(card.subreddit_url)">
+				<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> {{card.subreddit_path}}
+				</span>
+				&nbsp;
+				<span class="white no-break link" ng-click="open(card.source_url)">
+				<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> {{card.source}}
+				</span>
+				&nbsp;
+				<span class="white no-break link" ng-click="setSubreddit(card.subreddit)">
+				<span class="glyphicon glyphicon-record" aria-hidden="true"></span> #{{card.subreddit_path}}
+				</span>
+			</small>
+		</div>
+	</div>
+</div>
