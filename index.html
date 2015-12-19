@@ -57,7 +57,7 @@
             window.ga_debug = {trace: true};
         }
 	</script>
-	<script type="text/ng-template" id="partials/main.html">
+	<script type="text/ng-template" id="/partials/main.html">
 		<div ng-class="{sfw:sfw}">
 			<nav class="navbar navbar-inverse navbar-fixed-top shadow" role="navigation" ng-controller="MenuController">
 				<div class="container-fluid">
@@ -191,7 +191,7 @@
 			</div>
 		</div>
 	</script>
-	<script type="text/ng-template" id="partials/card.html">
+	<script type="text/ng-template" id="/partials/card.html">
 		<div>
 			<div class="list-group">
 				<div ng-if="card.content_image" class="list-group-item item-image full">
@@ -251,7 +251,7 @@
 			</div>
 		</div>
 	</script>
-	<script type="text/ng-template" id="partials/lightbox.html">
+	<script type="text/ng-template" id="/partials/lightbox.html">
 		<img class="card img-responsive" ng-if="card.content_image" ng-src="{{card.content_image}}" alt="{{card.title}}">
 		<img class="card img-responsive" ng-if="card.content_gif" ng-src="{{card.content_gif}}" alt="{{card.title}}">
 		<img class="card img-responsive" ng-repeat="image in card.content_images" ng-src="{{image}}" alt="{{card.title}}">
